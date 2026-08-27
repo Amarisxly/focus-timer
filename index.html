@@ -1,0 +1,95 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover, maximum-scale=1, user-scalable=no" />
+  <title>Focus</title>
+
+  <!-- PWA -->
+  <link rel="manifest" href="manifest.webmanifest" />
+  <meta name="theme-color" content="#000000" />
+  <meta name="background-color" content="#000000" />
+
+  <!-- iOS install support -->
+  <meta name="apple-mobile-web-app-capable" content="yes" />
+  <meta name="apple-mobile-web-app-status-bar-style" content="black" />
+  <meta name="apple-mobile-web-app-title" content="Focus" />
+  <link rel="apple-touch-icon" href="icons/apple-touch-icon.png" />
+
+  <link rel="icon" type="image/png" sizes="32x32" href="icons/favicon-32.png" />
+  <link rel="icon" type="image/png" sizes="16x16" href="icons/favicon-16.png" />
+
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@200;300;400;500&family=Space+Mono:wght@400;700&display=swap" />
+  <link rel="stylesheet" href="styles.css" />
+</head>
+<body>
+
+  <!-- ---------------- HOME : idle clock + reveal menu ---------------- -->
+  <div id="home" class="screen">
+    <div class="home-inner" id="homeInner">
+      <div class="clock-wrap" id="clockWrap">
+        <div class="clock" id="clockText">00:00:00</div>
+      </div>
+      <div class="hint" id="hint">tap to begin</div>
+      <div class="menu" id="menu"></div>
+    </div>
+  </div>
+
+  <!-- ---------------- FOCUS : timer functions ---------------- -->
+  <div id="focus" class="screen focus-screen">
+    <div class="topbar">
+      <button id="backBtn" class="icon-btn" aria-label="Back">
+        <svg viewBox="0 0 24 24" width="18" height="18"><path d="M15 6l-6 6 6 6" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg>
+      </button>
+      <span id="focusLabel" class="eyebrow"></span>
+      <button id="queueBtn" class="icon-btn" aria-label="Upcoming queue">
+        <svg viewBox="0 0 24 24" width="16" height="16"><path d="M8 6h13M8 12h13M8 18h13M3 6h.01M3 12h.01M3 18h.01" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg>
+      </button>
+    </div>
+
+    <div class="timer-area">
+      <div class="active-tag">
+        <span id="activeIcon" class="tag-icon"></span>
+        <span id="activeName"></span>
+      </div>
+
+      <div class="ring-wrap">
+        <svg viewBox="0 0 264 264" width="264" height="264" class="ring-svg">
+          <circle cx="132" cy="132" r="120" class="ring-track" />
+          <circle cx="132" cy="132" r="120" class="ring-progress" id="ringProgress" />
+        </svg>
+        <div class="ring-center">
+          <div class="time" id="timeDisplay">25:00</div>
+          <div class="status" id="statusText">ready</div>
+        </div>
+      </div>
+
+      <div class="stepper">
+        <button id="minusBtn" class="stepper-btn">−</button>
+        <span id="durationText">25 min</span>
+        <button id="plusBtn" class="stepper-btn">+</button>
+      </div>
+
+      <div class="controls">
+        <button id="resetBtn" class="icon-btn round" aria-label="Reset">
+          <svg viewBox="0 0 24 24" width="16" height="16"><path d="M3 12a9 9 0 1 0 3-6.7M3 4v5h5" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"/></svg>
+        </button>
+        <button id="playBtn" class="play-btn" aria-label="Play or pause"></button>
+        <div class="spacer"></div>
+      </div>
+    </div>
+
+    <div id="queuePanel" class="queue-panel">
+      <div class="queue-header">
+        <span class="eyebrow">UP NEXT · swipe to remove</span>
+        <button id="addBtn" class="icon-btn small" aria-label="Add to queue"></button>
+      </div>
+      <div id="addForm" class="add-form" hidden></div>
+      <div id="queueList" class="queue-list"></div>
+    </div>
+  </div>
+
+  <script src="app.js"></script>
+</body>
+</html>
