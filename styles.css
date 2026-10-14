@@ -37,7 +37,10 @@ button {
 
 /* ---------------- HOME ---------------- */
 
+/* The clock is the only thing in normal flow, so it sits at the exact vertical
+   centre. The hint and the menu are absolutely positioned so they can't push it up. */
 .home-inner {
+  position: relative;
   height: 100%;
   width: 100%;
   display: flex;
@@ -45,20 +48,27 @@ button {
   align-items: center;
   justify-content: center;
   cursor: pointer;
-  padding: 0 4%;
+  padding: 0 15%; /* left/right screen margin around the clock */
+}
+
+.clock-shift {
+  position: relative;
+  width: 100%;
+  transition: transform 420ms ease;
 }
 
 .clock-wrap {
   width: 100%;
   display: flex;
   justify-content: center;
-  overflow: hidden;
-  transition: transform 420ms ease;
+  overflow: visible;
 }
 
 .clock {
   font-weight: 200;
   letter-spacing: 0.04em;
+  margin-right: -0.04em; /* cancel the trailing letter-spacing so the digits are truly centred */
+  font-variant-numeric: tabular-nums; /* equal-width digits: no left/right wobble each second */
   color: var(--text);
   text-shadow: 0 0 26px var(--glow);
   white-space: nowrap;
@@ -67,7 +77,12 @@ button {
 }
 
 .hint {
+  position: absolute;
+  left: 0;
+  right: 0;
+  top: 100%;
   margin-top: 14px;
+  text-align: center;
   font-size: 11px;
   letter-spacing: 0.18em;
   text-transform: uppercase;
@@ -75,28 +90,30 @@ button {
   transition: opacity 300ms ease;
 }
 
+/* --menuY is set from app.js so the clock + menu block stays centred when open */
 .menu {
-  margin-top: 40px;
+  position: absolute;
+  left: 0;
+  right: 0;
+  top: 50%;
+  margin: 0 auto;
+  width: min(320px, 92%);
   display: flex;
   flex-wrap: wrap;
   justify-content: center;
   gap: 12px;
-  max-width: 320px;
   opacity: 0;
-  transform: translateY(10px);
+  transform: translateY(calc(var(--menuY, 0px) + 10px));
   pointer-events: none;
   transition: opacity 420ms ease, transform 420ms ease;
 }
 
-.home-inner.menu-open .clock-wrap {
-  transform: translateY(-84px) scale(0.72);
-}
 .home-inner.menu-open .hint {
   opacity: 0;
 }
 .home-inner.menu-open .menu {
   opacity: 1;
-  transform: translateY(0);
+  transform: translateY(var(--menuY, 0px));
   pointer-events: auto;
 }
 
@@ -335,7 +352,7 @@ button {
 
 @media (prefers-reduced-motion: reduce) {
   .clock { animation: none !important; }
-  .clock-wrap, .hint, .menu, .icon-btn, .menu-btn, .stepper-btn, .play-btn, .queue-panel, .ring-progress, .chip {
+  .clock-shift, .hint, .menu, .icon-btn, .menu-btn, .stepper-btn, .play-btn, .queue-panel, .ring-progress, .chip {
     transition: none !important;
   }
 }
