@@ -1,4 +1,4 @@
-const CACHE = "focus-cache-v5";
+const CACHE = "focus-cache-v1";
 const SHELL = [
   "./",
   "./index.html",

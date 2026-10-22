@@ -75,7 +75,6 @@
   // ---------------------------------------------------------------
   const $ = (id) => document.getElementById(id);
   const homeInner = $("homeInner");
-  const clockShift = $("clockShift");
   const clockWrap = $("clockWrap");
   const clockText = $("clockText");
   const menuEl = $("menu");
@@ -123,65 +122,21 @@
   function tickClock() {
     clockText.textContent = fmtClock(new Date());
   }
-  // Invisible side-bearings of the digits (px at 100px font size). The ink width is the
-  // rendered text box minus these, so the screen margin is measured to the glyph edges.
-  let inkCtx = null;
-  function sideBearingsAt100() {
-    try {
-      if (!inkCtx) inkCtx = document.createElement("canvas").getContext("2d");
-      const cs = getComputedStyle(clockText);
-      inkCtx.font = `${cs.fontWeight} 100px ${cs.fontFamily}`;
-      const hasLS = "letterSpacing" in inkCtx;
-      if (hasLS) inkCtx.letterSpacing = "4px"; // 0.04em at 100px
-      const m = inkCtx.measureText("00:00:00");
-      const advance = hasLS ? m.width : m.width + 8 * 4;
-      const left = -m.actualBoundingBoxLeft;                 // gap before the first glyph's ink
-      const right = advance - m.actualBoundingBoxRight;      // gap after the last glyph's ink (incl. trailing spacing)
-      const total = left + right;
-      return total > 0 && total < 40 ? total : 0;            // sanity range; 0 = ignore
-    } catch (e) {
-      return 0;
-    }
-  }
   function fitClock() {
     const BASE = 100;
-    // clockWrap is already inset by the screen margin (padding on .home-inner, 15% per side),
-    // so the digits are scaled to fill it completely
-    const targetWidth = clockWrap.clientWidth;
+    const targetWidth = clockWrap.clientWidth * 0.92;
     const prev = clockText.style.fontSize;
     clockText.style.fontSize = `${BASE}px`;
-    const measured = clockText.scrollWidth - sideBearingsAt100();
+    const measured = clockText.scrollWidth;
     clockText.style.fontSize = prev;
     if (measured > 0) {
       clockText.style.fontSize = `${(targetWidth / measured) * BASE}px`;
     }
-    layoutHome(); // clock height changed -> re-centre the clock/menu block
   }
-
-  // Closed: the clock sits dead-centre. Open: the clock (shrunk) + gap + menu are
-  // centred together as one block. Measured, not hard-coded, because the clock
-  // fills the width and is far taller on desktop than on a phone.
-  function layoutHome() {
-    if ($("home").style.display === "none") return; // measurements are 0 while hidden
-    const SCALE = 0.72;
-    const GAP = 40;
-    const clockH = clockWrap.offsetHeight * SCALE;
-    const menuH = menuEl.offsetHeight;
-    const total = clockH + GAP + menuH;
-    const clockShiftY = -total / 2 + clockH / 2;
-    const menuY = -total / 2 + clockH + GAP;
-    homeInner.style.setProperty("--menuY", `${menuY}px`);
-    clockShift.style.transform = state.menuOpen
-      ? `translateY(${clockShiftY}px) scale(${SCALE})`
-      : "translateY(0) scale(1)";
-  }
-
   tickClock();
   fitClock();
   setInterval(tickClock, 1000);
   window.addEventListener("resize", fitClock);
-  window.addEventListener("load", fitClock);
-  if (document.fonts && document.fonts.ready) document.fonts.ready.then(fitClock);
 
   // ---------------------------------------------------------------
   // home tap -> reveal menu
@@ -189,7 +144,6 @@
   homeInner.addEventListener("click", () => {
     state.menuOpen = !state.menuOpen;
     homeInner.classList.toggle("menu-open", state.menuOpen);
-    layoutHome();
   });
 
   // ---------------------------------------------------------------
@@ -221,7 +175,6 @@
     homeInner.classList.remove("menu-open");
     focusScreen.classList.remove("visible");
     $("home").style.display = "flex";
-    layoutHome();
     queuePanel.classList.remove("open");
     renderQueue();
   }
